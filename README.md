@@ -1,6 +1,3 @@
-notification
-============
-
 # Notification
 
 This package came up with a structure and a database design of a 
