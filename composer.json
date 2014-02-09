@@ -1,0 +1,23 @@
+{
+    "name": "softservlet/notification",
+    "description": "",
+    "authors": [
+        {
+            "name": "Softservlet",
+            "email": "dev@softservlet.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.1.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Softservlet\\Notification\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
