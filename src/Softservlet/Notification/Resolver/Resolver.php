@@ -62,7 +62,6 @@ class Resolver implements ResolverInterface
 	public function resolve($notifications, $param = null)
 	{
 		$this->param = $param;
-		var_dump($this->param);die();
 		$response = $this->recursiveResolver($notifications);
 		return $response;
 	}
