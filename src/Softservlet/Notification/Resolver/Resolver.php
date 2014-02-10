@@ -45,6 +45,8 @@ class Resolver implements ResolverInterface
 	const CALLBACK_GROUP = 'group';
 	const CALLBACK_SINGLE = 'single';
 
+	private $param = null;
+
 	public function __construct($mapper)
 	{
 		$this->mapper = $mapper;
@@ -57,8 +59,10 @@ class Resolver implements ResolverInterface
 	 *
 	 * @return array
 	 */
-	public function resolve($notifications)
+	public function resolve($notifications, $param = null)
 	{
+		$this->param = $param;
+		var_dump($this->param);die();
 		$response = $this->recursiveResolver($notifications);
 		return $response;
 	}
@@ -96,25 +100,25 @@ class Resolver implements ResolverInterface
 				//todo - rewrite this spaggeti code expression 
 				if(isset($this->mapper[$map][self::CALLBACK_GROUP]) && $notificationCounter>1) 
 				{
-					$param = $this->_pruneNotifications($notifications, $notification);
+					$notifications = $this->_pruneNotifications($notifications, $notification);
 					if(is_callable($this->mapper[$map][self::CALLBACK_GROUP]))
 					{
-						$response[] = call_user_func($this->mapper[$map][self::CALLBACK_GROUP], $param);
+						$response[] = call_user_func($this->mapper[$map][self::CALLBACK_GROUP], $notifications, $this->param);
 					}
 					else
 					{
-						$response[] = $this->mapControllerResolver($this->mapper[$map], $param, self::CALLBACK_GROUP);
+						$response[] = $this->mapControllerResolver($this->mapper[$map], $notifications, self::CALLBACK_GROUP, $this->param);
 					}
 				}
 				else
 				{
 					if(is_callable($this->mapper[$map][self::CALLBACK_GROUP]))
 					{
-						$response[] = call_user_func($this->mapper[$map][self::CALLBACK_GROUP], $param);
+						$response[] = call_user_func($this->mapper[$map][self::CALLBACK_GROUP], $notifications, $this->param);
 					}
 					else
 					{
-						$response[] = $this->mapControllerResolver($this->mapper[$map], $notification, self::CALLBACK_SINGLE);
+						$response[] = $this->mapControllerResolver($this->mapper[$map], $notification, self::CALLBACK_SINGLE, $this->param);
 					}
 				}
 			}
@@ -239,16 +243,18 @@ class Resolver implements ResolverInterface
 	 * notification of NotificationInterface type
 	 * @param $callbackType - are constants for make the difference between
 	 * CALLBACK_SINGLE and CALLBACK_GROUP
+	 * @param $arg - a secondary argument, this argument will be passed to all
+	 * notifications
 	 *
 	 * @return string 
 	 */
-	private function mapControllerResolver($map, $param, $callbackType)
+	private function mapControllerResolver($map, $param, $callbackType, $arg)
 	{
 		try
 		{
 			$callbackData = explode('@', $map[$callbackType]);
 			$object = new $callbackData[0];
-			return $object->$callbackData[1]($param);
+			return $object->$callbackData[1]($param, $arg);
 		}
 		catch(Exception $e)
 		{
