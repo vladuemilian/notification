@@ -13,7 +13,10 @@ interface ResolverInterface
 	 * of notifications to a specified notification 
 	 * controller.
 	 *
+	 * @param array $notifications - an array with NotificationInterface objects
+	 * @param $param - this argument will be passed to all notifications
+	 *
 	 * @return array
 	 */
-	public function resolve($notifications);
+	public function resolve($notifications, $param);
 }
