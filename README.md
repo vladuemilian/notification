@@ -1,6 +1,6 @@
 # Notification
 
-This package came up with a structure and a database design of a 
+This package came up with a structure and a database design for a 
 scalable notifications system for web applications. It provides
 an easy and extensible way to manage notifications for your web 
 application. 
