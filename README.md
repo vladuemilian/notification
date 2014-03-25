@@ -119,7 +119,7 @@ $mapper = array
 		'single'	=> function($notification)
 		{
 			//a dummy repository of photos
-			$photoRepository = new photoRepository;
+			$photoRepository = new photoRepository();
 			//here we get the photo based on the ID that we've passed 
 			//as parameter to NotificationEntity
 
