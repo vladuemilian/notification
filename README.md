@@ -136,6 +136,69 @@ $mapper = array
 );
 ```
 
+###Mapper standard
+Todo
+
+###A complete workflow 
+
+```php
+
+//let's create a notification of this objects
+//in this example we want to notify a User that a Photo has been Created
+
+//create the object we want to nofify - in our case the Photo
+$object = App::make('Softservlet\Notification\Notification\NotificationEntityInterface', array('Photo'));
+//create an actor of the notification, in our case will be Create verb
+$actor = App::make('Softservlet\Notification\Notification\NotificationEntityInterface', array('Created', 15));
+
+//we need to notify someone about this notification
+//so we create a instance of an object which implements NotificableInterface
+$notificable = App::make('Softservlet\Notification\NotificableInterface');
+$notificable = $notificable->find(1);  //??????
+
+//create an instance of notification repository
+$notificationRepository = App::make('Softservlet\Notification\Repositories\NotificationRepositoryInterface');
+
+//create the notification - each notification is made by an object
+//and an actor
+$notification = $notificationRepository->create($object, $actor);
+
+//once a notification is created, you can attach it to multiple users
+$notificationRepository->attach($notificable, $notification);
+
+//mapper array - the standard is defined in documentation
+$mapper = array
+(
+        array
+        (
+                'object'	=> 'Photo',
+                'actor'		=> 'Created',
+                'single'	=> function($notification)
+                {
+                        return 'xyzABCD';
+                },
+                'group'		=> function($notifications, $username)
+                {
+                        return $username->email.' has ' . count($notifications) . ' new notifications to a photo';
+                }
+        )
+);
+
+//resolve this notification - call the specify callback defined in mapper
+//we need to call this to 
+$resolver = App::make('Softservlet\Notification\Resolver\Resolver', array($mapper));
+
+//get all notifications for $notificable object 
+//which we've been instantiated before
+$repo = App::make('Softservlet\Notification\Repositories\NotificableRepositoryInterface', $notificable);
+$notifications = $repo->get(); //get all notifications from $notificable user object
+
+//resolve all notifications for $notificable object
+//result will be an array of rendered notifications
+$result = $resolver->resolve($notifications, $notificable);
+
+```
+
 
 
 
